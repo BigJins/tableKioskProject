@@ -30,6 +30,11 @@
             font-size: 1.1em;
             color: #555;
         }
+        .description {
+            font-size: 0.9em;
+            color: #777;
+            margin-top: 10px; /* 설명과 가격 사이에 간격 추가 */
+        }
     </style>
 </head>
 <body>
@@ -37,6 +42,7 @@
     <div class="row">
         <div class="col-12">
             <ul class="list-inline text-center">
+                <!-- 카테고리 버튼들 -->
                 <li class="list-inline-item">
                     <a href="?category=1" class="btn btn-outline-primary">마른안주류</a>
                 </li>
@@ -88,6 +94,7 @@
                     <div class="card-body">
                         <h5 class="card-title">${menu.name}</h5>
                         <p class="card-text">${fn:substringBefore(menu.price, '.')}원</p> <!-- Format price -->
+                        <p class="description">${menu.description}</p> <!-- 메뉴 설명 추가 -->
                         <button class="btn btn-primary" onclick="addToOrder(${menu.mno})">주문담기</button> <!-- Add to Order button -->
                     </div>
                 </div>
