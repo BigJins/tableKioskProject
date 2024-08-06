@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ include file="../includes/header.jsp"%>
 <!DOCTYPE html>
 <html lang="ko">
@@ -9,7 +10,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css"> <!-- 사용자 정의 스타일 시트 링크 -->
     <style>
         .menu-card {
-            height: 300px; /* 카드의 고정 높이 설정 */
+            height: 350px; /* 카드의 고정 높이 설정 */
             display: flex;
             flex-direction: column;
             justify-content: space-between; /* 이미지와 텍스트 사이의 공간을 균등하게 배분 */
@@ -18,11 +19,20 @@
             height: 150px; /* 이미지의 고정 높이 설정 */
             object-fit: cover; /* 이미지 비율 유지 */
         }
+        .card-body {
+            text-align: center; /* 텍스트를 중앙 정렬 */
+        }
+        .card-title {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .card-text {
+            font-size: 1.1em;
+            color: #555;
+        }
     </style>
 </head>
 <body>
-
-
 <div class="container mt-4">
     <div class="row">
         <div class="col-12">
@@ -77,7 +87,8 @@
                     <img src="${pageContext.request.contextPath}/images/category/m${menu.mno}_c${menu.categoryId}.jpg" class="card-img-top" alt="${menu.name}" />
                     <div class="card-body">
                         <h5 class="card-title">${menu.name}</h5>
-                        <p class="card-text">${menu.price}원</p>
+                        <p class="card-text">${fn:substringBefore(menu.price, '.')}원</p> <!-- Format price -->
+                        <button class="btn btn-primary" onclick="addToOrder(${menu.mno})">주문담기</button> <!-- Add to Order button -->
                     </div>
                 </div>
             </div>
@@ -88,5 +99,12 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.6/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    function addToOrder(menuId) {
+        // This function would handle adding the item to the order.
+        // You can implement this function to send an AJAX request or update the order summary on the page.
+        alert('Menu item ' + menuId + ' added to order!');
+    }
+</script>
 </body>
 </html>
