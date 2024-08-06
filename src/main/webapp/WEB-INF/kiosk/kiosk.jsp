@@ -35,6 +35,10 @@
             color: #777;
             margin-top: 10px; /* 설명과 가격 사이에 간격 추가 */
         }
+        .active-category {
+            background-color: #007bff; /* 활성화된 카테고리 색상 */
+            color: white; /* 글자 색상 */
+        }
     </style>
 </head>
 <body>
@@ -42,45 +46,45 @@
     <div class="row">
         <div class="col-12">
             <ul class="list-inline text-center">
-                <!-- 카테고리 버튼들 -->
+                <c:set var="selectedCategory" value="${param.category}" /> <!-- 선택된 카테고리 저장 -->
                 <li class="list-inline-item">
-                    <a href="?category=1" class="btn btn-outline-primary">마른안주류</a>
+                    <a href="?category=1" class="btn btn-outline-primary ${selectedCategory == '1' ? 'active-category' : ''}">마른안주류</a>
                 </li>
                 <li class="list-inline-item">
-                    <a href="?category=2" class="btn btn-outline-primary">과일류</a>
+                    <a href="?category=2" class="btn btn-outline-primary ${selectedCategory == '2' ? 'active-category' : ''}">과일류</a>
                 </li>
                 <li class="list-inline-item">
-                    <a href="?category=3" class="btn btn-outline-primary">튀김류</a>
+                    <a href="?category=3" class="btn btn-outline-primary ${selectedCategory == '3' ? 'active-category' : ''}">튀김류</a>
                 </li>
                 <li class="list-inline-item">
-                    <a href="?category=4" class="btn btn-outline-primary">면류</a>
+                    <a href="?category=4" class="btn btn-outline-primary ${selectedCategory == '4' ? 'active-category' : ''}">면류</a>
                 </li>
                 <li class="list-inline-item">
-                    <a href="?category=5" class="btn btn-outline-primary">치킨류</a>
+                    <a href="?category=5" class="btn btn-outline-primary ${selectedCategory == '5' ? 'active-category' : ''}">치킨류</a>
                 </li>
                 <li class="list-inline-item">
-                    <a href="?category=6" class="btn btn-outline-primary">탕류</a>
+                    <a href="?category=6" class="btn btn-outline-primary ${selectedCategory == '6' ? 'active-category' : ''}">탕류</a>
                 </li>
                 <li class="list-inline-item">
-                    <a href="?category=7" class="btn btn-outline-primary">생맥주</a>
+                    <a href="?category=7" class="btn btn-outline-primary ${selectedCategory == '7' ? 'active-category' : ''}">생맥주</a>
                 </li>
                 <li class="list-inline-item">
-                    <a href="?category=8" class="btn btn-outline-primary">흑맥주</a>
+                    <a href="?category=8" class="btn btn-outline-primary ${selectedCategory == '8' ? 'active-category' : ''}">흑맥주</a>
                 </li>
                 <li class="list-inline-item">
-                    <a href="?category=9" class="btn btn-outline-primary">병맥주</a>
+                    <a href="?category=9" class="btn btn-outline-primary ${selectedCategory == '9' ? 'active-category' : ''}">병맥주</a>
                 </li>
                 <li class="list-inline-item">
-                    <a href="?category=10" class="btn btn-outline-primary">수입맥주</a>
+                    <a href="?category=10" class="btn btn-outline-primary ${selectedCategory == '10' ? 'active-category' : ''}">수입맥주</a>
                 </li>
                 <li class="list-inline-item">
-                    <a href="?category=11" class="btn btn-outline-primary">소주</a>
+                    <a href="?category=11" class="btn btn-outline-primary ${selectedCategory == '11' ? 'active-category' : ''}">소주</a>
                 </li>
                 <li class="list-inline-item">
-                    <a href="?category=12" class="btn btn-outline-primary">집기류</a>
+                    <a href="?category=12" class="btn btn-outline-primary ${selectedCategory == '12' ? 'active-category' : ''}">집기류</a>
                 </li>
                 <li class="list-inline-item">
-                    <a href="?category=13" class="btn btn-outline-primary">음료</a>
+                    <a href="?category=13" class="btn btn-outline-primary ${selectedCategory == '13' ? 'active-category' : ''}">음료</a>
                 </li>
             </ul>
         </div>
