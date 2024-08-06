@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
+import org.example.tablekioskproject.common.StringUtil;
 import org.example.tablekioskproject.dao.CustomerDAO;
 import org.example.tablekioskproject.vo.MenuVO;
 
@@ -25,7 +26,8 @@ public class KioskController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String categoryParam = req.getParameter("category");
-        int categoryId = (categoryParam != null) ? Integer.parseInt(categoryParam) : 1;
+//        int categoryId = (categoryParam != null) ? Integer.parseInt(categoryParam) : 1;
+        int categoryId = StringUtil.getInt(categoryParam, 1); // StringUtil을 사용하여 categoryId 설정
 
         try {
             List<MenuVO> menuList = customerDAO.getMenusByCategory(categoryId);
@@ -33,7 +35,7 @@ public class KioskController extends HttpServlet {
             req.getRequestDispatcher("/WEB-INF/kiosk/kiosk.jsp").forward(req, resp);
         } catch (Exception e) {
             log.error("Error processing request", e);
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다.");
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "비상 서버오류!!");
         }
     }
 }
