@@ -13,6 +13,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,8 +90,6 @@ public enum CustomerDAO {
         return detailsList;
     }
 
-
-
     public BigDecimal getMenuPriceById(int mno) throws Exception {
         log.info("getMenuPriceById called");
         String sql = "SELECT price FROM tbl_k_menu WHERE mno = ?";
@@ -136,5 +136,31 @@ public enum CustomerDAO {
         ps.setInt(3, detail.getQuantity());
         ps.setBigDecimal(4, detail.getTotal_price());
         ps.executeUpdate();
+    }
+
+    // New method to handle order creation and detail insertion
+    public int createOrderWithDetail(int tableNumber, int mno, int quantity, BigDecimal totalPrice) throws Exception {
+        // Create and insert order
+        OrderVO order = OrderVO.builder()
+                .table_number(tableNumber)
+                .o_sequence(1) // Adjust the sequence logic as necessary
+                .o_status("테스트용")
+                .o_date(LocalDate.now())
+                .o_time(LocalDateTime.now())
+                .build();
+
+        int ono = insertOrder(order);
+
+        // Create and insert order detail
+        DetailVO detail = DetailVO.builder()
+                .ono(ono)
+                .mno(mno)
+                .quantity(quantity)
+                .total_price(totalPrice)
+                .build();
+
+        insertOrderDetail(detail);
+
+        return ono;
     }
 }

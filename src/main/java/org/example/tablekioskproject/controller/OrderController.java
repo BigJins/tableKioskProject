@@ -7,14 +7,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import org.example.tablekioskproject.dao.CustomerDAO;
-import org.example.tablekioskproject.vo.DetailVO;
 import org.example.tablekioskproject.vo.OrderDetailVO;
-import org.example.tablekioskproject.vo.OrderVO;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @WebServlet("/order")
@@ -34,29 +30,11 @@ public class OrderController extends HttpServlet {
             int quantity = Integer.parseInt(req.getParameter("quantity"));
             int mno = Integer.parseInt(req.getParameter("mno"));
 
-            BigDecimal price = customerDAO.getMenuPriceById(mno); // Assuming this method exists to get menu price
+            BigDecimal price = customerDAO.getMenuPriceById(mno);
             BigDecimal totalPrice = price.multiply(new BigDecimal(quantity));
 
-            // 주문 먼저
-            OrderVO order = OrderVO.builder()
-                    .table_number(tableNumber)
-                    .o_sequence(1) // Sequence 설정 필요
-                    .o_status("테스트용")
-                    .o_date(LocalDate.now())
-                    .o_time(LocalDateTime.now())
-                    .build();
-            int ono = customerDAO.insertOrder(order);
+            customerDAO.createOrderWithDetail(tableNumber, mno, quantity, totalPrice);
 
-            // 상세 주문
-            DetailVO detail = DetailVO.builder()
-                    .ono(ono)
-                    .mno(mno)
-                    .quantity(quantity)
-                    .total_price(totalPrice)
-                    .build();
-            customerDAO.insertOrderDetail(detail);
-
-            // 모든 주문 상세 정보를 조회
             List<OrderDetailVO> orderDetails = customerDAO.getAllOrderDetails();
 
             req.setAttribute("orderDetails", orderDetails);
