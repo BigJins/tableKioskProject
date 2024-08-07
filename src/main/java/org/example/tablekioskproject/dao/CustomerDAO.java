@@ -24,6 +24,19 @@ public enum CustomerDAO {
 
     CustomerDAO() {}
 
+    public BigDecimal getTotalPriceSum() throws Exception {
+        String sql = "SELECT SUM(total_price) AS total_sum FROM tbl_k_detail";
+
+        @Cleanup Connection con = ConnectionUtil.INSTANCE.getDs().getConnection();
+        @Cleanup PreparedStatement ps = con.prepareStatement(sql);
+        @Cleanup ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getBigDecimal("total_sum");
+        }
+        return BigDecimal.ZERO;
+    }
+
+
     public void deleteOrderDetail(int ono, int mno) throws Exception {
         String sql = "DELETE FROM tbl_k_detail WHERE ono = ? AND mno = ?";
 

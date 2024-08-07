@@ -24,6 +24,23 @@ public class OrderController extends HttpServlet {
     }
 
     @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            // 모든 주문 상세 정보를 조회
+            List<OrderDetailVO> orderDetails = customerDAO.getAllOrderDetails();
+            BigDecimal totalSum = customerDAO.getTotalPriceSum();
+            req.setAttribute("orderDetails", orderDetails);
+            req.setAttribute("totalSum", totalSum);
+
+            // JSP 페이지로 포워딩
+            req.getRequestDispatcher("/WEB-INF/kiosk/orderDetails.jsp").forward(req, resp);
+        } catch (Exception e) {
+            log.error("Error processing request", e);
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "비상 서버오류!!");
+        }
+    }
+
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             int tableNumber = Integer.parseInt(req.getParameter("table_number"));
@@ -36,8 +53,10 @@ public class OrderController extends HttpServlet {
             customerDAO.createOrderWithDetail(tableNumber, mno, quantity, totalPrice);
 
             List<OrderDetailVO> orderDetails = customerDAO.getAllOrderDetails();
+            BigDecimal totalSum = customerDAO.getTotalPriceSum();
 
             req.setAttribute("orderDetails", orderDetails);
+            req.setAttribute("totalSum", totalSum);
             req.getRequestDispatcher("/WEB-INF/kiosk/orderDetails.jsp").forward(req, resp);
         } catch (Exception e) {
             log.error("Error processing order", e);

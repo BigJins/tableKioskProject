@@ -6,25 +6,36 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> <!-- 부트스트랩 CSS 링크 -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css"> <!-- 사용자 정의 스타일 시트 링크 -->
+    <title>Menu</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
     <style>
         .menu-card {
-            height: 350px; /* 카드의 고정 높이 설정 */
+            height: 100%;
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* 이미지와 텍스트 사이의 공간을 균등하게 배분 */
+            justify-content: space-between;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .menu-card:hover {
+            transform: translateY(-5px);
         }
         .card-img-top {
-            height: 150px; /* 이미지의 고정 높이 설정 */
-            object-fit: cover; /* 이미지 비율 유지 */
+            height: 200px;
+            object-fit: cover;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
         }
         .card-body {
-            text-align: center; /* 텍스트를 중앙 정렬 */
+            text-align: center;
+            padding: 1rem;
         }
         .card-title {
             font-size: 1.2em;
             font-weight: bold;
+            color: #343a40;
         }
         .card-text {
             font-size: 1.1em;
@@ -33,11 +44,28 @@
         .description {
             font-size: 0.9em;
             color: #777;
-            margin-top: 10px; /* 설명과 가격 사이에 간격 추가 */
+            margin-top: 10px;
         }
         .active-category {
             background-color: #007bff; /* 활성화된 카테고리 색상 */
             color: white; /* 글자 색상 */
+        }
+        .input-group {
+            max-width: 150px;
+            margin: 0 auto;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        iframe {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
@@ -94,22 +122,23 @@
         <div class="col-md-9">
             <div class="row">
                 <c:forEach var="menu" items="${menuList}">
-                    <div class="col-md-3 mb-4">
+                    <div class="col-md-4 mb-4">
                         <div class="card menu-card">
                             <img src="/img/m${menu.mno}_c${menu.categoryId}.jpg" class="card-img-top" alt="${menu.name}" />
                             <div class="card-body">
                                 <h5 class="card-title">${menu.name}</h5>
                                 <p class="card-text">${fn:substringBefore(menu.price, '.')}원</p>
                                 <p class="description">${menu.description}</p>
-
                                 <form action="/order" method="post" target="orderDetailsFrame">
                                     <input type="hidden" name="mno" value="${menu.mno}" />
                                     <input type="hidden" name="table_number" value="1" />
-                                    <input type="number" id="quantity" name="quantity" min="1" value="1" />
-                                    <button class="btn btn-primary">주문담기</button>
+                                    <div class="input-group">
+                                        <input type="number" id="quantity" name="quantity" class="form-control" min="1" value="1" />
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" type="submit">주문담기</button>
+                                        </div>
+                                    </div>
                                 </form>
-
-
                             </div>
                         </div>
                     </div>
@@ -118,7 +147,7 @@
         </div>
 
         <div class="col-md-3">
-            <iframe name="orderDetailsFrame" style="width: 100%; height: 100%; border: 2px solid #ccc;"></iframe>
+            <iframe id="orderDetailsFrame" name="orderDetailsFrame" style="width: 100%; height: 100%; border: 2px solid #ccc;"></iframe>
         </div>
     </div>
 </div>
@@ -126,6 +155,11 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.6/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    // 새로고침 시 iframe 내용 갱신
+    document.getElementById('orderDetailsFrame').src = '/order';
+</script>
 
 </body>
 </html>
