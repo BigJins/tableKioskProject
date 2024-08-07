@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 @Getter
 @ToString
 public class OrderDetailVO {
+    private int ono;         // Add ono field
+    private int mno;         // Add mno field
     private String menuName;
     private BigDecimal menuPrice;
     private int quantity;

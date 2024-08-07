@@ -91,31 +91,41 @@
     </div>
 
     <div class="row mt-4">
-        <c:forEach var="menu" items="${menuList}">
-            <div class="col-md-3 mb-4">
-                <div class="card menu-card">
-                    <img src="${pageContext.request.contextPath}/images/category/m${menu.mno}_c${menu.categoryId}.jpg" class="card-img-top" alt="${menu.name}" />
-                    <div class="card-body">
-                        <h5 class="card-title">${menu.name}</h5>
-                        <p class="card-text">${fn:substringBefore(menu.price, '.')}원</p> <!-- Format price -->
-                        <p class="description">${menu.description}</p> <!-- 메뉴 설명 추가 -->
-                        <button class="btn btn-primary" onclick="addToOrder(${menu.mno})">주문담기</button> <!-- Add to Order button -->
+        <div class="col-md-9">
+            <div class="row">
+                <c:forEach var="menu" items="${menuList}">
+                    <div class="col-md-3 mb-4">
+                        <div class="card menu-card">
+                            <img src="/img/m${menu.mno}_c${menu.categoryId}.jpg" class="card-img-top" alt="${menu.name}" />
+                            <div class="card-body">
+                                <h5 class="card-title">${menu.name}</h5>
+                                <p class="card-text">${fn:substringBefore(menu.price, '.')}원</p>
+                                <p class="description">${menu.description}</p>
+
+                                <form action="/order" method="post" target="orderDetailsFrame">
+                                    <input type="hidden" name="mno" value="${menu.mno}" />
+                                    <input type="hidden" name="table_number" value="1" />
+                                    <input type="number" id="quantity" name="quantity" min="1" value="1" />
+                                    <button class="btn btn-primary">주문담기</button>
+                                </form>
+
+
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </c:forEach>
             </div>
-        </c:forEach>
+        </div>
+
+        <div class="col-md-3">
+            <iframe name="orderDetailsFrame" style="width: 100%; height: 100%; border: 2px solid #ccc;"></iframe>
+        </div>
     </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.6/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script>
-    function addToOrder(menuId) {
-        // This function would handle adding the item to the order.
-        // You can implement this function to send an AJAX request or update the order summary on the page.
-        alert('Menu item ' + menuId + ' added to order!');
-    }
-</script>
+
 </body>
 </html>

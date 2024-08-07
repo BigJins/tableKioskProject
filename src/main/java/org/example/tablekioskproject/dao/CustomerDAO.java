@@ -22,12 +22,16 @@ public enum CustomerDAO {
 
     CustomerDAO() {}
 
-    public void deleteOrderDetail(int detailId) throws Exception {
-        String sql = "DELETE FROM tbl_k_detail WHERE detail_id = ?";
+    public void deleteOrderDetail(int ono, int mno) throws Exception {
+        String sql = "DELETE FROM tbl_k_detail WHERE ono = ? AND mno = ?";
 
         @Cleanup Connection con = ConnectionUtil.INSTANCE.getDs().getConnection();
         @Cleanup PreparedStatement ps = con.prepareStatement(sql);
-        ps.executeQuery();
+
+        ps.setInt(1, ono);
+        ps.setInt(2, mno);
+
+        ps.executeUpdate();
     }
 
     public List<MenuVO> getMenusByCategory(int categoryId) throws Exception {
@@ -61,16 +65,18 @@ public enum CustomerDAO {
         List<OrderDetailVO> detailsList = new ArrayList<>();
 
         String sql = """
-                SELECT m.name AS menu_name, m.price AS menu_price, d.quantity, d.total_price 
-                FROM tbl_k_menu m 
-                INNER JOIN tbl_k_detail d ON m.mno = d.mno
-                """;
+            SELECT d.ono, d.mno, m.name AS menu_name, m.price AS menu_price, d.quantity, d.total_price 
+            FROM tbl_k_menu m 
+            INNER JOIN tbl_k_detail d ON m.mno = d.mno
+            """;
 
         @Cleanup Connection con = ConnectionUtil.INSTANCE.getDs().getConnection();
         @Cleanup PreparedStatement ps = con.prepareStatement(sql);
         @Cleanup ResultSet rs = ps.executeQuery();
         while (rs.next()) {
             OrderDetailVO detail = OrderDetailVO.builder()
+                    .ono(rs.getInt("ono"))   // Populate ono
+                    .mno(rs.getInt("mno"))   // Populate mno
                     .menuName(rs.getString("menu_name"))
                     .menuPrice(rs.getBigDecimal("menu_price"))
                     .quantity(rs.getInt("quantity"))
@@ -81,6 +87,7 @@ public enum CustomerDAO {
 
         return detailsList;
     }
+
 
 
     public BigDecimal getMenuPriceById(int mno) throws Exception {

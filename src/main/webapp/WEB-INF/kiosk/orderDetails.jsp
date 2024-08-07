@@ -37,10 +37,13 @@
     <div class="detail">
         <label>총 가격: </label><span><%= detail.getTotal_price() %></span>원
     </div>
+
     <form action="/remove" method="post">
+        <input type="hidden" name="ono" value="<%= detail.getOno() %>"/>
+        <input type="hidden" name="mno" value="<%= detail.getMno() %>"/>
         <button>삭제</button>
     </form>
-    <hr/>
+<hr/>
 <% } %>
 <% } else { %>
 <p>주문 상세 정보가 없습니다.</p>
