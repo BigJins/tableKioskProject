@@ -3,8 +3,10 @@ package org.example.tablekioskproject.dao;
 import lombok.Cleanup;
 import lombok.extern.log4j.Log4j2;
 import org.example.tablekioskproject.common.ConnectionUtil;
+import org.example.tablekioskproject.vo.DetailVO;
 import org.example.tablekioskproject.vo.MenuVO;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -96,4 +98,56 @@ public enum CustomerDAO {
 
         return menuList;
     }
+
+    public void addOrder(int tableNumber, List<DetailVO> detailList) throws Exception {
+        log.info("addOrder called");
+
+        String orderSql = "INSERT INTO tbl_k_order (table_number, o_status, o_date, o_time) VALUES (?, ?, CURDATE(), CURTIME())";
+        String detailSql = "INSERT INTO tbl_k_order_detail (ono, mno, quantity, total_price) VALUES (?, ?, ?, ?)";
+
+        @Cleanup Connection con = ConnectionUtil.INSTANCE.getDs().getConnection();
+        @Cleanup PreparedStatement orderPs = con.prepareStatement(orderSql, PreparedStatement.RETURN_GENERATED_KEYS);
+
+        // 기본 주문 정보 삽입
+        orderPs.setInt(1, tableNumber);
+        orderPs.setString(2, "Pending"); // 초기 상태를 'Pending'으로 설정
+        orderPs.executeUpdate();
+
+        // 생성된 주문 번호 가져오기
+        @Cleanup ResultSet generatedKeys = orderPs.getGeneratedKeys();
+        if (generatedKeys.next()) {
+            int ono = generatedKeys.getInt(1); // 주문 번호
+            // 주문 세부 정보 삽입
+            @Cleanup PreparedStatement detailPs = con.prepareStatement(detailSql);
+                for (DetailVO detail : detailList) {
+                    detailPs.setInt(1, ono);
+                    detailPs.setInt(2, detail.getMno());
+                    detailPs.setInt(3, detail.getQuantity());
+                    detailPs.setBigDecimal(4, detail.getTotal_price());
+                    detailPs.addBatch();
+                }
+                detailPs.executeBatch();
+
+        }
+
+        log.info("Order added successfully");
+    }
+
+    public BigDecimal getMenuPrice(int mno) throws Exception {
+        log.info("getMenuPrice called for menu id: {}", mno);
+        String sql = "SELECT price FROM tbl_k_menu WHERE mno = ? AND is_sold_out = FALSE";
+
+        @Cleanup Connection con = ConnectionUtil.INSTANCE.getDs().getConnection();
+        @Cleanup PreparedStatement ps = con.prepareStatement(sql);
+        ps.setInt(1, mno);
+
+        @Cleanup ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getBigDecimal("price");
+        }
+        throw new Exception("Menu not found or sold out");
+    }
+
+
 }
+

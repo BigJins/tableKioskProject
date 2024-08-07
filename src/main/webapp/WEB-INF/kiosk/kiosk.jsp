@@ -1,3 +1,4 @@
+<%@ page import="java.math.BigDecimal" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
@@ -99,23 +100,32 @@
                         <h5 class="card-title">${menu.name}</h5>
                         <p class="card-text">${fn:substringBefore(menu.price, '.')}원</p> <!-- Format price -->
                         <p class="description">${menu.description}</p> <!-- 메뉴 설명 추가 -->
-                        <button class="btn btn-primary" onclick="addToOrder(${menu.mno})">주문담기</button> <!-- Add to Order button -->
+                        <form action="${pageContext.request.contextPath}/add" method="post" target="orderSummaryFrame">
+                            <input type="hidden" name="tableNumber" value="1"> <!-- 실제 테이블 번호로 변경 필요 -->
+                            <input type="hidden" name="mno" value="${menu.mno}">
+                            <div class="form-group">
+                                <label for="quantity-${menu.mno}">수량</label>
+                                <input type="number" id="quantity-${menu.mno}" name="quantity" class="form-control" min="1" value="1">
+                            </div>
+                            <button type="submit" class="btn btn-primary">주문 담기</button> <!-- Form submission button -->
+                        </form>
                     </div>
                 </div>
             </div>
         </c:forEach>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <h3>주문 내역</h3>
+            <iframe name="orderSummaryFrame" src="${pageContext.request.contextPath}/orderSummary" width="100%" height="500" frameborder="0"></iframe>
+        </div>
     </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.6/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script>
-    function addToOrder(menuId) {
-        // This function would handle adding the item to the order.
-        // You can implement this function to send an AJAX request or update the order summary on the page.
-        alert('Menu item ' + menuId + ' added to order!');
-    }
-</script>
+
 </body>
 </html>
