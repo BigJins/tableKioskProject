@@ -13,9 +13,9 @@ import java.io.IOException;
 @Log4j2
 public class StartKioskController extends HttpServlet {
 
-@Override
-protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-req.getRequestDispatcher("/WEB-INF/kiosk/startkiosk.jsp").forward(req, resp);
-}
+        req.getRequestDispatcher("/WEB-INF/kiosk/startkiosk.jsp").forward(req, resp);
+    }
 }

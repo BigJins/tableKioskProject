@@ -31,8 +31,7 @@ public class OrderController extends HttpServlet {
             BigDecimal totalSum = customerDAO.getTotalPriceSum();
             req.setAttribute("orderDetails", orderDetails);
             req.setAttribute("totalSum", totalSum);
-
-            // JSP 페이지로 포워딩
+            
             req.getRequestDispatcher("/WEB-INF/kiosk/orderDetails.jsp").forward(req, resp);
         } catch (Exception e) {
             log.error("Error processing request", e);
@@ -54,9 +53,9 @@ public class OrderController extends HttpServlet {
 
             List<OrderDetailVO> orderDetails = customerDAO.getAllOrderDetails();
             BigDecimal totalSum = customerDAO.getTotalPriceSum();
-
-            req.setAttribute("orderDetails", orderDetails);
             req.setAttribute("totalSum", totalSum);
+            req.setAttribute("orderDetails", orderDetails);
+
             req.getRequestDispatcher("/WEB-INF/kiosk/orderDetails.jsp").forward(req, resp);
         } catch (Exception e) {
             log.error("Error processing order", e);

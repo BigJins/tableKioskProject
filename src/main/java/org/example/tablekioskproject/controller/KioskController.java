@@ -9,9 +9,11 @@ import lombok.extern.log4j.Log4j2;
 import org.example.tablekioskproject.common.StringUtil;
 import org.example.tablekioskproject.dao.CustomerDAO;
 import org.example.tablekioskproject.vo.MenuVO;
+import org.example.tablekioskproject.vo.DetailVO;
 import org.example.tablekioskproject.vo.OrderDetailVO;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 
 @WebServlet("/kiosk")
@@ -38,11 +40,13 @@ public class KioskController extends HttpServlet {
             List<OrderDetailVO> orderDetails = customerDAO.getAllOrderDetails();
             req.setAttribute("orderDetails", orderDetails);
 
-            // JSP 페이지로 포워딩
+            BigDecimal totalSum = customerDAO.getTotalPriceSum();
+            req.setAttribute("totalSum", totalSum);
+
             req.getRequestDispatcher("/WEB-INF/kiosk/kiosk.jsp").forward(req, resp);
         } catch (Exception e) {
-            log.error("Error processing request", e);
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "비상 서버오류!!");
+            log.error("Error retrieving menu or order details", e);
+            throw new ServletException("Error retrieving menu or order details", e);
         }
     }
 }

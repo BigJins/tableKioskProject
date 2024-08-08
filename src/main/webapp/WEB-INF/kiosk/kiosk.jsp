@@ -118,6 +118,8 @@
         </div>
     </div>
 
+    <%-- 이 부분   --%>
+
     <div class="row mt-4">
         <div class="col-md-9">
             <div class="row">
@@ -135,7 +137,7 @@
                                     <div class="input-group">
                                         <input type="number" id="quantity" name="quantity" class="form-control" min="1" value="1" />
                                         <div class="input-group-append">
-                                            <button class="btn btn-primary" type="submit">주문담기</button>
+                                            <button class="btn btn-primary" type="submit">담기</button>
                                         </div>
                                     </div>
                                 </form>
@@ -147,8 +149,12 @@
         </div>
 
         <div class="col-md-3">
+            <form action="/detail" method="post">
+                <button class="btn btn-primary btn-block mb-2" type="submit">주문하기</button>
+            </form>
             <iframe id="orderDetailsFrame" name="orderDetailsFrame" style="width: 100%; height: 100%; border: 2px solid #ccc;"></iframe>
         </div>
+
     </div>
 </div>
 

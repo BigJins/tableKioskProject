@@ -12,7 +12,11 @@
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
+            margin-bottom: 60px; /* Add margin to the bottom to avoid overlapping with footer */
             background-color: #f8f9fa; /* Light grey background for better contrast */
+        }
+        .container {
+            min-height: calc(100vh - 80px); /* Ensure container takes up full height minus footer */
         }
         .card {
             margin-bottom: 20px;
@@ -40,6 +44,16 @@
             font-size: 1.5em;
             text-align: right;
         }
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
     </style>
 </head>
 <body>
@@ -58,7 +72,7 @@
                     <p class="card-text">
                         <strong>가격:</strong> <%= detail.getMenuPrice().intValue() %>원<br>
                         <strong>수량:</strong> <%= detail.getQuantity() %><br>
-                        <strong>총 가격:</strong> <span class="total-price"><%= detail.getTotal_price().intValue() %></span>원
+                        <strong>총합:</strong> <span class="total-price"><%= detail.getTotal_price().intValue() %></span>원
                     </p>
                     <form action="/remove" method="post" class="d-inline">
                         <input type="hidden" name="ono" value="<%= detail.getOno() %>"/>

@@ -24,8 +24,48 @@ public enum CustomerDAO {
 
     CustomerDAO() {}
 
+    // 1번 테이블 모든 주문 데이터 가져옴
+    public List<OrderDetailVO> getAllOrderDetails() throws Exception {
+        log.info("getAllOrderDetails called");
+        List<OrderDetailVO> detailsList = new ArrayList<>();
+
+        String sql = """
+            SELECT d.ono, d.mno, m.name AS menu_name, m.category_id, 
+                   m.price AS menu_price, d.quantity, d.total_price 
+            FROM tbl_k_menu m 
+            INNER JOIN tbl_k_detail d ON m.mno = d.mno
+            INNER JOIN tbl_k_order o ON d.ono = o.ono
+            WHERE o.table_number = 1
+            """;
+
+
+        @Cleanup Connection con = ConnectionUtil.INSTANCE.getDs().getConnection();
+        @Cleanup PreparedStatement ps = con.prepareStatement(sql);
+        @Cleanup ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            OrderDetailVO detail = OrderDetailVO.builder()
+                    .ono(rs.getInt("ono"))
+                    .mno(rs.getInt("mno"))
+                    .menuName(rs.getString("menu_name"))
+                    .category_id(rs.getInt("category_id"))
+                    .menuPrice(rs.getBigDecimal("menu_price"))
+                    .quantity(rs.getInt("quantity"))
+                    .total_price(rs.getBigDecimal("total_price"))
+                    .build();
+            detailsList.add(detail);
+        }
+
+        return detailsList;
+    }
+
+    // 주문한 총합 계산
     public BigDecimal getTotalPriceSum() throws Exception {
-        String sql = "SELECT SUM(total_price) AS total_sum FROM tbl_k_detail";
+        String sql = """
+                    SELECT SUM(total_price) AS total_sum
+                    FROM tbl_k_detail d
+                    INNER JOIN tbl_k_order o ON d.ono = o.ono
+                    WHERE o.table_number = 1
+                    """;
 
         @Cleanup Connection con = ConnectionUtil.INSTANCE.getDs().getConnection();
         @Cleanup PreparedStatement ps = con.prepareStatement(sql);
@@ -36,7 +76,7 @@ public enum CustomerDAO {
         return BigDecimal.ZERO;
     }
 
-
+    // 장바구니에서 삭제
     public void deleteOrderDetail(int ono, int mno) throws Exception {
         String sql = "DELETE FROM tbl_k_detail WHERE ono = ? AND mno = ?";
 
@@ -49,6 +89,7 @@ public enum CustomerDAO {
         ps.executeUpdate();
     }
 
+    // 카테고리별로 조회
     public List<MenuVO> getMenusByCategory(int categoryId) throws Exception {
         log.info("getMenusByCategory called");
         List<MenuVO> menuList = new ArrayList<>();
@@ -75,49 +116,7 @@ public enum CustomerDAO {
         return menuList;
     }
 
-    public List<OrderDetailVO> getAllOrderDetails() throws Exception {
-        log.info("getAllOrderDetails called");
-        List<OrderDetailVO> detailsList = new ArrayList<>();
-
-        String sql = """
-            SELECT d.ono, d.mno, m.name AS menu_name, m.price AS menu_price, d.quantity, d.total_price 
-            FROM tbl_k_menu m 
-            INNER JOIN tbl_k_detail d ON m.mno = d.mno
-            """;
-
-        @Cleanup Connection con = ConnectionUtil.INSTANCE.getDs().getConnection();
-        @Cleanup PreparedStatement ps = con.prepareStatement(sql);
-        @Cleanup ResultSet rs = ps.executeQuery();
-        while (rs.next()) {
-            OrderDetailVO detail = OrderDetailVO.builder()
-                    .ono(rs.getInt("ono"))   // Populate ono
-                    .mno(rs.getInt("mno"))   // Populate mno
-                    .menuName(rs.getString("menu_name"))
-                    .menuPrice(rs.getBigDecimal("menu_price"))
-                    .quantity(rs.getInt("quantity"))
-                    .total_price(rs.getBigDecimal("total_price"))
-                    .build();
-            detailsList.add(detail);
-        }
-
-        return detailsList;
-    }
-
-    public BigDecimal getMenuPriceById(int mno) throws Exception {
-        log.info("getMenuPriceById called");
-        String sql = "SELECT price FROM tbl_k_menu WHERE mno = ?";
-
-        @Cleanup Connection con = ConnectionUtil.INSTANCE.getDs().getConnection();
-        @Cleanup PreparedStatement ps = con.prepareStatement(sql);
-        ps.setInt(1, mno);
-        @Cleanup ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            return rs.getBigDecimal("price");
-        } else {
-            throw new Exception("Menu item not found");
-        }
-    }
-
+    // 주문 추가
     public int insertOrder(OrderVO order) throws Exception {
         log.info("insertOrder called");
         String sql = "INSERT INTO tbl_k_order (table_number, o_sequence, o_status, o_date, o_time) VALUES (?, ?, ?, ?, ?)";
@@ -138,6 +137,7 @@ public enum CustomerDAO {
         return 0;
     }
 
+    // 주문 상세 추가
     public void insertOrderDetail(DetailVO detail) throws Exception {
         log.info("insertOrderDetail called");
         String sql = "INSERT INTO tbl_k_detail (ono, mno, quantity, total_price) VALUES (?, ?, ?, ?)";
@@ -151,20 +151,19 @@ public enum CustomerDAO {
         ps.executeUpdate();
     }
 
-    // New method to handle order creation and detail insertion
+    // 따로 빼냄 gpt가
     public int createOrderWithDetail(int tableNumber, int mno, int quantity, BigDecimal totalPrice) throws Exception {
-        // Create and insert order
+
         OrderVO order = OrderVO.builder()
                 .table_number(tableNumber)
-                .o_sequence(1) // Adjust the sequence logic as necessary
-                .o_status("테스트용")
+                .o_sequence(1)
+                .o_status("주문 대기")
                 .o_date(LocalDate.now())
                 .o_time(LocalDateTime.now())
                 .build();
 
         int ono = insertOrder(order);
 
-        // Create and insert order detail
         DetailVO detail = DetailVO.builder()
                 .ono(ono)
                 .mno(mno)
@@ -175,5 +174,21 @@ public enum CustomerDAO {
         insertOrderDetail(detail);
 
         return ono;
+    }
+
+    // 가격 가져오기
+    public BigDecimal getMenuPriceById(int mno) throws Exception {
+        log.info("getMenuPriceById called");
+        String sql = "SELECT price FROM tbl_k_menu WHERE mno = ?";
+
+        @Cleanup Connection con = ConnectionUtil.INSTANCE.getDs().getConnection();
+        @Cleanup PreparedStatement ps = con.prepareStatement(sql);
+        ps.setInt(1, mno);
+        @Cleanup ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getBigDecimal("price");
+        } else {
+            throw new Exception("Menu item not found");
+        }
     }
 }

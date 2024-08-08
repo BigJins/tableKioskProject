@@ -8,9 +8,11 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
-            background-color: #f8f9fa;
+            background: url('/img/background.jpg') no-repeat center center fixed;
+            background-size: cover;
             text-align: center;
             padding: 50px;
+            color: white;
         }
         .start-title {
             font-size: 2.5rem;
@@ -29,10 +31,6 @@
 <body>
 
 <%@ include file="../includes/header.jsp"%>
-
-<div>
-    <a href="kiosk" class="btn btn-primary btn-start">메뉴 보기</a>
-</div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.6/dist/umd/popper.min.js"></script>
